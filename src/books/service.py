@@ -260,7 +260,7 @@ class BookService:
             
             # 3. Delete the book
             # delete() is synchronous - it marks the object for deletion in the session
-            session.delete(book_to_delete)
+            await session.delete(book_to_delete)
             
             # 4. Commit the transaction
             await session.commit()
