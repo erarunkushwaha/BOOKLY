@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     # Database configuration
     # Format: postgresql+asyncpg://user:password@host:port/database
     DATABASE_URL: str = Field(
-        default="",
+        default="postgresql+asyncpg://postgres:password@localhost:5432/bookdb",
         description="PostgreSQL database connection URL with asyncpg driver"
     )
     
