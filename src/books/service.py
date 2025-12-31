@@ -71,7 +71,7 @@ class BookService:
             result = await session.execute(statement)
             
             # Get all results as a list
-            books = result.scalars().all()
+            books = list(result.scalars().all())
             
             logger.info(f"Retrieved {len(books)} books from database")
             return books
