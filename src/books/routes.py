@@ -76,7 +76,8 @@ async def get_all_books(
         books = await BookService.get_all_books(session, skip=skip, limit=limit)
         
         # Convert SQLModel objects to Pydantic response models
-        return [BookResponse.model_validate(book) for book in books]
+        # Use from_attributes=True to convert ORM objects to Pydantic models
+        return [BookResponse.model_validate(book, from_attributes=True) for book in books]
         
     except Exception as e:
         logger.error(f"Error in get_all_books endpoint: {e}")
@@ -123,7 +124,8 @@ async def get_book(
             )
         
         # Convert SQLModel object to Pydantic response model
-        return BookResponse.model_validate(book)
+        # Use from_attributes=True to convert ORM objects to Pydantic models
+        return BookResponse.model_validate(book, from_attributes=True)
         
     except HTTPException:
         # Re-raise HTTP exceptions as-is
@@ -169,7 +171,8 @@ async def create_book(
         new_book = await BookService.create_book(book, session)
         
         # Convert SQLModel object to Pydantic response model
-        return BookResponse.model_validate(new_book)
+        # Use from_attributes=True to convert ORM objects to Pydantic models
+        return BookResponse.model_validate(new_book, from_attributes=True)
         
     except Exception as e:
         logger.error(f"Error in create_book endpoint: {e}")
@@ -214,7 +217,8 @@ async def update_book(
         updated_book = await BookService.update_book(book_uid, book_update, session)
         
         # Convert SQLModel object to Pydantic response model
-        return BookResponse.model_validate(updated_book)
+        # Use from_attributes=True to convert ORM objects to Pydantic models
+        return BookResponse.model_validate(updated_book, from_attributes=True)
         
     except BookNotFoundError as e:
         # Convert service layer exception to HTTP exception

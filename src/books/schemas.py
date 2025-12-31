@@ -5,7 +5,7 @@ This module defines the request/response models for the book API endpoints.
 Pydantic automatically validates incoming data and serializes outgoing data.
 """
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 from typing import Optional
 from datetime import datetime
 import uuid
@@ -163,21 +163,19 @@ class BookResponse(BookBase):
         examples=["2024-01-15T10:30:00Z"]
     )
     
-    class Config:
-        """
-        Pydantic configuration for the model.
-        """
+    # Pydantic v2 configuration
+    model_config = ConfigDict(
         # Use enum values instead of enum names
-        use_enum_values = True
+        use_enum_values=True,
         # Validate assignment (check types when assigning to model instances)
-        validate_assignment = True
-        # Use JSON encoders for custom types
-        json_encoders = {
+        validate_assignment=True,
+        # Serialize datetime and UUID properly
+        json_encoders={
             datetime: lambda v: v.isoformat(),  # Convert datetime to ISO format
             uuid.UUID: lambda v: str(v),  # Convert UUID to string
-        }
+        },
         # Example data for API documentation
-        json_schema_extra = {
+        json_schema_extra={
             "example": {
                 "uid": "123e4567-e89b-12d3-a456-426614174000",
                 "title": "The Alchemist",
@@ -188,3 +186,4 @@ class BookResponse(BookBase):
                 "updated_at": "2024-01-15T10:30:00Z"
             }
         }
+    )
