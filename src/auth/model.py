@@ -37,7 +37,7 @@ class User(SQLModel, table=True):
     
     first_name:str
     last_name:str
-    is_veriied:bool = False
+    is_veriied:bool = Field(default=False)
     # Timestamp fields
     # These are automatically managed by the database
     created_at: datetime = Field(
@@ -59,5 +59,6 @@ class User(SQLModel, table=True):
         ),
         description="Timestamp when the book was last updated"
     )
-    
-    
+
+    def __repr__(self) -> str:
+        return f"<User {self.username}>"
