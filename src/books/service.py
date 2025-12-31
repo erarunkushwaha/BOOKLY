@@ -66,11 +66,12 @@ class BookService:
             # Apply pagination
             statement = statement.offset(skip).limit(limit)
             
-            # Execute the query
-            result = await session.exec(statement)
+            # Execute the query using SQLAlchemy's async execute method
+            # scalars() returns scalar results (single column/object results)
+            result = await session.execute(statement)
             
-            # Convert result to list
-            books = result.all()
+            # Get all results as a list
+            books = result.scalars().all()
             
             logger.info(f"Retrieved {len(books)} books from database")
             return books
@@ -98,11 +99,12 @@ class BookService:
             # Create a SELECT query with WHERE clause
             statement = select(Book).where(Book.uid == book_uid)
             
-            # Execute the query
-            result = await session.exec(statement)
+            # Execute the query using SQLAlchemy's async execute method
+            # scalars() returns scalar results (single column/object results)
+            result = await session.execute(statement)
             
             # Get the first result (should be unique since uid is primary key)
-            book = result.first()
+            book = result.scalar_one_or_none()
             
             if book:
                 logger.info(f"Retrieved book with uid: {book_uid}")
@@ -257,7 +259,8 @@ class BookService:
                 raise BookNotFoundError(f"Book with uid {book_uid} not found")
             
             # 3. Delete the book
-            await session.delete(book_to_delete)
+            # delete() is synchronous - it marks the object for deletion in the session
+            session.delete(book_to_delete)
             
             # 4. Commit the transaction
             await session.commit()
