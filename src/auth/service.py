@@ -40,13 +40,7 @@ class UserService:
         # Extract and remove the plain password
         plain_password = user_data_dict.pop("password")
         # Hash the password and add to dict
-        # user_data_dict["password_hash"] = generate_password_hash(plain_password)
-
-        pwd = generate_password_hash(plain_password)        
-        print("**************. pwd **********",pwd)
-        
-        # user_data_dict["password_hash"] = plain_password
-        
+        user_data_dict["password_hash"] = generate_password_hash(plain_password)
     
         # Now create the user with the correct fields
         new_user = User(**user_data_dict)
