@@ -37,7 +37,7 @@ class User(SQLModel, table=True):
     
     first_name:str
     last_name:str
-    is_veriied:bool = Field(default=False)
+    is_verified:bool = Field(default=False)
     password_hash:str = Field(exclude=True)
     # Timestamp fields
     # These are automatically managed by the database
