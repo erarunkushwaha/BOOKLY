@@ -54,6 +54,8 @@ class UserService:
 
         session.add(new_user)
         print("**************. ONE **********")
+        
+        await session.flush()
 
         await session.refresh(new_user)
         print("**************. TWO **********")

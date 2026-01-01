@@ -2,6 +2,7 @@
 from pydantic import BaseModel, Field,ConfigDict
 import uuid
 from datetime import datetime
+from typing import Optional
 
 
 class UserCreateModel(BaseModel):
@@ -20,7 +21,7 @@ class UserResponse(BaseModel):
     last_name:str
     is_verified:bool
     created_at:datetime
-    updated_at:datetime
+    updated_at:Optional[datetime] = None
     
     
     
