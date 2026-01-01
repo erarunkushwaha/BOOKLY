@@ -19,10 +19,8 @@ class UserService:
         statement = select(User).where(User.email == email)
 
         result = await session.execute(statement)
-        print("#####----::", result)
 
         user = result.first()
-        print("user #####----::", user)
 
         logger.info(f"Retrieved  user from database")
         return user
@@ -43,7 +41,11 @@ class UserService:
         plain_password = user_data_dict.pop("password")
         # Hash the password and add to dict
         # user_data_dict["password_hash"] = generate_password_hash(plain_password)
-        user_data_dict["password_hash"] = plain_password
+
+        pwd = generate_password_hash(plain_password)        
+        print("**************. pwd **********",pwd)
+        
+        # user_data_dict["password_hash"] = plain_password
         
     
         # Now create the user with the correct fields
@@ -53,18 +55,15 @@ class UserService:
         # print("password #####----::", new_user)
 
         session.add(new_user)
-        print("**************. ONE **********")
         
         # await session.flush()
 
         # await session.refresh(new_user)
-        print("**************. TWO **********")
         
         await session.commit()
-        print("**************. THREE **********")
         
         
-        logger.info(f"NEW USER CREATED ************************: {new_user.first_name} (uid: {new_user.last_name})")
+        # logger.info(f"NEW USER CREATED ************************: {new_user.first_name} (uid: {new_user.last_name})")
         
 
         return new_user
