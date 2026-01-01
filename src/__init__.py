@@ -14,11 +14,11 @@ import logging
 from src.config import Config
 from src.db.main import init_db, close_db
 from src.books.routes import book_router
+from src.auth.routes import auth_router
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -27,19 +27,19 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     """
     Application lifespan context manager.
-    
+
     This function handles startup and shutdown events for the FastAPI application.
     It's called automatically by FastAPI when the application starts and stops.
-    
+
     On startup:
         - Initialize the database (create tables if they don't exist)
-        
+
     On shutdown:
         - Close database connections gracefully
-        
+
     Args:
         app: The FastAPI application instance
-        
+
     Yields:
         None (control is yielded to the application)
     """
@@ -51,11 +51,11 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"Application startup: Failed to initialize database: {e}")
         raise
-    
+
     # Yield control to the application
     # The application will run until it's shut down
     yield
-    
+
     # Shutdown: Close database connections
     logger.info("Application shutdown: Closing database connections...")
     try:
@@ -96,14 +96,14 @@ app.add_middleware(
 async def global_exception_handler(request, exc):
     """
     Global exception handler for unhandled exceptions.
-    
+
     This catches any exceptions that aren't handled by route handlers
     and returns a proper JSON error response instead of crashing the application.
-    
+
     Args:
         request: The HTTP request that caused the exception
         exc: The exception that was raised
-        
+
     Returns:
         JSONResponse with error details
     """
@@ -112,8 +112,8 @@ async def global_exception_handler(request, exc):
         status_code=500,
         content={
             "detail": "Internal server error",
-            "message": str(exc) if Config.DB_ECHO else "An unexpected error occurred"
-        }
+            "message": str(exc) if Config.DB_ECHO else "An unexpected error occurred",
+        },
     )
 
 
@@ -123,19 +123,19 @@ async def global_exception_handler(request, exc):
     "/health",
     tags=["health"],
     summary="Health check",
-    description="Check if the API is running and healthy"
+    description="Check if the API is running and healthy",
 )
 async def health_check():
     """
     Health check endpoint.
-    
+
     Returns:
         Dictionary with health status
     """
     return {
         "status": "healthy",
         "app_name": Config.APP_NAME,
-        "version": Config.APP_VERSION
+        "version": Config.APP_VERSION,
     }
 
 
@@ -144,5 +144,11 @@ async def health_check():
 app.include_router(
     book_router,
     prefix=Config.API_V1_PREFIX,  # Prefix from config (e.g., "/api/v1")
-    tags=["books"]  # Tag for API documentation grouping
+    tags=["books"],  # Tag for API documentation grouping
+)
+
+app.include_router(
+    auth_router,
+    prefix=Config.API_V1_PREFIX,
+    tags=["auth"]
 )
