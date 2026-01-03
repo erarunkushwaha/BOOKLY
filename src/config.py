@@ -26,6 +26,22 @@ class Settings(BaseSettings):
         description="PostgreSQL database connection URL with asyncpg driver"
     )
     
+    JWT_SECRET_KEY: str = Field(
+    default="db0c14a56b0908e82d55d2274c912e9a",
+    description="JWT secret key"
+    )
+    
+    JWT_ALGORITHM: str = Field(
+    default="HS256",
+    description="JWT ALGORITHM"
+    )
+    
+    ACCESS_TOKEN_EXPIRY: int = Field(
+    default=3600,
+    description="JWT EXPIRY TIME"
+    )
+    
+    
     # Application settings
     APP_NAME: str = Field(
         default="Bookly API",

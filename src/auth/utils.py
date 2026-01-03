@@ -1,4 +1,10 @@
 import bcrypt
+from datetime import timedelta,datetime
+import jwt
+from src.config import Config
+import uuid
+import logging
+
 
 
 def generate_password_hash(password: str) -> str:
@@ -36,3 +42,26 @@ def verify_password(password: str, hash: str) -> bool:
     
     # Verify password
     return bcrypt.checkpw(password_bytes, hash_bytes)
+
+def generate_access_token(user_data:dict, expiry:timedelta | None = None , refresh: bool = False):
+    payload = {}
+    payload['user'] = user_data
+    payload['exp'] = datetime.now() + (expiry if expiry is not None else timedelta(seconds=Config.ACCESS_TOKEN_EXPIRY))
+    payload['jti'] = str(uuid.uuid4)
+    payload['refresh'] = refresh
+    
+    encoded_jwt = jwt.encode(payload=payload, key=Config.JWT_SECRET_KEY, algorithm=Config.JWT_ALGORITHM)
+    return encoded_jwt
+    
+    
+def decode_token(token:str) -> dict | None:
+    
+    try:
+        token_data = jwt.decode(jwt = token, key= Config.JWT_SECRET_KEY, algorithms=[Config.JWT_SECRET_KEY])
+        return token_data 
+    
+    except jwt.PyJWTError as e:
+        logging.exception(e)
+        return None
+        
+        

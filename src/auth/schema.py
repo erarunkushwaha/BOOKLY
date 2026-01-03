@@ -23,6 +23,11 @@ class UserResponse(BaseModel):
     created_at:datetime
     updated_at:Optional[datetime] = None
     
+class UserLoginModel(BaseModel):
+    email:str
+    password:str
+
+    
     
     
     
