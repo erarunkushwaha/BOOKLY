@@ -14,10 +14,14 @@ import logging
 from src.db.main import get_session
 from src.books.schemas import BookCreate, BookUpdate, BookResponse
 from src.books.service import BookService, BookNotFoundError
+from src.auth.depedencies import AccessTokenBearer
+
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
+
+access_token_bearer = AccessTokenBearer()
 # Create router with prefix and tags for better organization
 # The prefix will be combined with the app's prefix in main.py
 book_router = APIRouter(
@@ -52,7 +56,8 @@ async def get_all_books(
         description="Maximum number of records to return (for pagination)",
         example=100
     ),
-    session: AsyncSession = Depends(get_session)
+    session: AsyncSession = Depends(get_session),
+    user_details = Depends(access_token_bearer)
 ) -> List[BookResponse]:
     """
     Retrieve all books from the database.
@@ -71,6 +76,8 @@ async def get_all_books(
     Raises:
         HTTPException: If there's an error retrieving books from the database
     """
+    
+    print("user details- ########################",user_details)
     try:
         # Call the service layer to get all books
         books = await BookService.get_all_books(session, skip=skip, limit=limit)
