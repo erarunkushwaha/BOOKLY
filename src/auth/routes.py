@@ -7,14 +7,14 @@ from fastapi.exceptions import HTTPException
 from .utils import generate_access_token, decode_token,verify_password
 from datetime import timedelta
 from fastapi.responses import JSONResponse
-
+from src.config import Config
 
 auth_router = APIRouter(
     prefix="/auth",
 )
 user_service = UserService()
 
-REFRESH_TOKEN_EXPIRY = 2
+
 
 @auth_router.post(
     "/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED
@@ -62,7 +62,7 @@ async def login(user_data:UserLoginModel, session:AsyncSession = Depends(get_ses
                     "user_uid":str(user.uid )
                 },
                 refresh=True,
-                expiry=timedelta(days= REFRESH_TOKEN_EXPIRY)
+                expiry=timedelta(days=Config.REFRESH_TOKEN_EXPIRY)
                 
             )
     

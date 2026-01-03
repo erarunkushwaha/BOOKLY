@@ -41,6 +41,11 @@ class Settings(BaseSettings):
     description="JWT EXPIRY TIME"
     )
     
+    REFRESH_TOKEN_EXPIRY: int = Field(
+        default=2,
+        description=""
+    )
+    
     
     # Application settings
     APP_NAME: str = Field(
