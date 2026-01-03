@@ -20,8 +20,8 @@ class UserService:
 
         result = await session.execute(statement)
 
-        user = result.first()
-
+        user = result.scalar_one_or_none()
+        
         logger.info(f"Retrieved  user from database")
         return user
 
@@ -32,10 +32,8 @@ class UserService:
 
     @staticmethod
     async def create_user(user_data: UserCreateModel, session: AsyncSession):
-        # print("user data #####----::", user_data)
 
         user_data_dict = user_data.model_dump()
-        # print("user_data_dict #####----::", user_data_dict)
 
         # Extract and remove the plain password
         plain_password = user_data_dict.pop("password")
@@ -44,20 +42,9 @@ class UserService:
     
         # Now create the user with the correct fields
         new_user = User(**user_data_dict)
-        # print("new_user #####----::", new_user)
 
-        # print("password #####----::", new_user)
 
         session.add(new_user)
         
-        # await session.flush()
-
-        # await session.refresh(new_user)
-        
         await session.commit()
-        
-        
-        # logger.info(f"NEW USER CREATED ************************: {new_user.first_name} (uid: {new_user.last_name})")
-        
-
         return new_user

@@ -37,7 +37,7 @@ async def create_user_account(
     return new_user
 
 
-@auth_router.post("/login",response_model=UserResponse, status_code=status.HTTP_200_OK)
+@auth_router.post("/login", status_code=status.HTTP_200_OK)
 
 async def login(user_data:UserLoginModel, session:AsyncSession = Depends(get_session)):
     email = user_data.email

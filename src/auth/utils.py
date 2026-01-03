@@ -47,7 +47,7 @@ def generate_access_token(user_data:dict, expiry:timedelta | None = None , refre
     payload = {}
     payload['user'] = user_data
     payload['exp'] = datetime.now() + (expiry if expiry is not None else timedelta(seconds=Config.ACCESS_TOKEN_EXPIRY))
-    payload['jti'] = str(uuid.uuid4)
+    payload['jti'] = str(uuid.uuid4())
     payload['refresh'] = refresh
     
     encoded_jwt = jwt.encode(payload=payload, key=Config.JWT_SECRET_KEY, algorithm=Config.JWT_ALGORITHM)
@@ -57,7 +57,7 @@ def generate_access_token(user_data:dict, expiry:timedelta | None = None , refre
 def decode_token(token:str) -> dict | None:
     
     try:
-        token_data = jwt.decode(jwt = token, key= Config.JWT_SECRET_KEY, algorithms=[Config.JWT_SECRET_KEY])
+        token_data = jwt.decode(token, key=Config.JWT_SECRET_KEY, algorithms=[Config.JWT_ALGORITHM])
         return token_data 
     
     except jwt.PyJWTError as e:
