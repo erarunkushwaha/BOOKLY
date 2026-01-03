@@ -1,6 +1,8 @@
 from fastapi import Request, HTTPException, status
 from fastapi.security import HTTPBearer
+from typing import List
 from .utils import decode_token
+from fastapi.security.http import HTTPAuthorizationCredentials
 
 
 
@@ -9,7 +11,7 @@ class TokenBearer(HTTPBearer):
     def __init__(self, auto_error=True):
         super().__init__(auto_error=auto_error)
 
-    async def __call__(self, request: Request) -> dict:
+    async def __call__(self, request: Request) -> HTTPAuthorizationCredentials:
         creads = await super().__call__(request)
         token = creads.credentials  # pyright: ignore[reportOptionalMemberAccess]
         token_data = decode_token(token)
