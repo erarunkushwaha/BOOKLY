@@ -22,17 +22,17 @@ class Settings(BaseSettings):
     # Database configuration
     # Format: postgresql+asyncpg://user:password@host:port/database
     DATABASE_URL: str = Field(
-        default="postgresql+asyncpg://postgres:password@localhost:5432/bookdb",
+        default="",
         description="PostgreSQL database connection URL with asyncpg driver"
     )
     
     JWT_SECRET_KEY: str = Field(
-    default="db0c14a56b0908e82d55d2274c912e9a",
+    default="",
     description="JWT secret key"
     )
     
     JWT_ALGORITHM: str = Field(
-    default="HS256",
+    default="",
     description="JWT ALGORITHM"
     )
     
