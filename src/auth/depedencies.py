@@ -3,6 +3,7 @@ from fastapi.security import HTTPBearer
 from typing import List
 from .utils import decode_token
 from fastapi.security.http import HTTPAuthorizationCredentials
+from src.db.redis import token_in_block_list
 
 
 
@@ -18,7 +19,18 @@ class TokenBearer(HTTPBearer):
         
         if not token_data:
             raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN, detail="Invalid or expired token"
+                status_code=status.HTTP_403_FORBIDDEN, detail={
+                    "error":"this token is invalid or has been revoked",
+                    "resolution":"Please get new token"
+                }
+            )
+            
+        if await token_in_block_list(token_data['jti']):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail={
+                    "error":"this token is invalid or has been revoked",
+                    "resolution":"Please get new token"
+                }
             )
         
         self.verify_token_data(token_data) # pyright: ignore[reportArgumentType]

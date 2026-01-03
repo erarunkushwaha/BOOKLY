@@ -45,6 +45,17 @@ class Settings(BaseSettings):
         default=2,
         description=""
     )
+    REDIS_HOST: str = Field(
+        default="",
+        description=""
+    )
+    
+    REDIS_PORT: int = Field(
+        default=6379,
+        description=""
+    )
+    
+
     
     
     # Application settings
