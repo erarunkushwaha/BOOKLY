@@ -12,6 +12,7 @@ import uuid
 import sqlalchemy.dialects.postgresql as pg
 from sqlalchemy import Column, Index
 from sqlalchemy.sql import func
+from typing import Optional
 
 
 class Book(SQLModel, table=True):
@@ -70,6 +71,8 @@ class Book(SQLModel, table=True):
         gt=0,  # Must be greater than 0
         description="Price of the book in currency units"
     )
+    
+    user_uid:Optional[uuid.UUID] = Field(default=None, foreign_key="user.uid")
 
     # Timestamp fields
     # These are automatically managed by the database
