@@ -120,7 +120,7 @@ class BookService:
     @staticmethod
     async def create_book(
         book_data: BookCreate,
-        user_uid:str,
+        user_uid: uuid.UUID,
         session: AsyncSession
     ) -> Book:
         """

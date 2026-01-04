@@ -175,9 +175,11 @@ async def create_book(
         HTTPException: 400 if validation fails, 500 if database error occurs
     """
     try:
-        user_id = token_details.get('user')['user_uid']
+        user_id_str = token_details.get('user')['user_uid']
+        # Convert string to UUID
+        user_id = uuid.UUID(user_id_str)
         # Call the service layer to create the book
-        new_book = await BookService.create_book(book, user_id,session)
+        new_book = await BookService.create_book(book, user_id, session)
         
         # Convert SQLModel object to Pydantic response model
         # Use from_attributes=True to convert ORM objects to Pydantic models
