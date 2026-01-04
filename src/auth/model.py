@@ -1,7 +1,7 @@
 from sqlmodel import SQLModel,Field,Relationship
 import uuid
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from sqlalchemy import Column
 import sqlalchemy.dialects.postgresql as pg
 from sqlalchemy.sql import func
@@ -42,7 +42,7 @@ class User(SQLModel, table=True):
     is_verified:bool = Field(default=False)
     password_hash:str = Field(exclude=True)
     
-    book:Optional["models.Book"] = Relationship(back_populates="user", sa_relationship_kwargs={'lazy':"selectin"})
+    books:List["models.Book"] = Relationship(back_populates="user", sa_relationship_kwargs={'lazy':"selectin"})
     
     # Timestamp fields
     # These are automatically managed by the database
