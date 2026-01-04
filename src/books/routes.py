@@ -155,7 +155,8 @@ async def get_book(
 )
 async def create_book(
     book: BookCreate,
-    session: AsyncSession = Depends(get_session)
+    session: AsyncSession = Depends(get_session),
+    token_details:dict = Depends(access_token_bearer)
 ) -> BookResponse:
     """
     Create a new book in the database.
@@ -174,8 +175,9 @@ async def create_book(
         HTTPException: 400 if validation fails, 500 if database error occurs
     """
     try:
+        user_id = token_details.get('user')['user_uid']
         # Call the service layer to create the book
-        new_book = await BookService.create_book(book, session)
+        new_book = await BookService.create_book(book, user_id,session)
         
         # Convert SQLModel object to Pydantic response model
         # Use from_attributes=True to convert ORM objects to Pydantic models
@@ -200,7 +202,9 @@ async def create_book(
 async def update_book(
     book_uid: uuid.UUID,
     book_update: BookUpdate,
-    session: AsyncSession = Depends(get_session)
+    session: AsyncSession = Depends(get_session),
+    token_details:dict = Depends(access_token_bearer)
+    
 ) -> BookResponse:
     """
     Update an existing book in the database.

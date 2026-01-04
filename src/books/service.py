@@ -120,6 +120,7 @@ class BookService:
     @staticmethod
     async def create_book(
         book_data: BookCreate,
+        user_uid:str,
         session: AsyncSession
     ) -> Book:
         """
@@ -142,6 +143,7 @@ class BookService:
             # Create a new Book instance
             # SQLModel will automatically generate the UUID if not provided
             new_book = Book(**book_data_dict)
+            new_book.user_uid = user_uid
             
             # Add the book to the session
             session.add(new_book)
