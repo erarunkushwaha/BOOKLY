@@ -16,6 +16,17 @@ A production-ready FastAPI REST API for managing book data with PostgreSQL datab
 
 ## Project Structure
 
+## docker 
+ - docker start bookly
+ - docker stop bookly
+ - docker logs bookly
+ - docker rm bookly
+```
+
+## Connection URL for your project
+```
+redis://localhost:6379
+
 ```
 bookly/
 ├── main.py                 # Application entry point
