@@ -1,10 +1,11 @@
-from sqlmodel import SQLModel,Field
+from sqlmodel import SQLModel,Field,Relationship
 import uuid
 from datetime import datetime
 from typing import Optional
 from sqlalchemy import Column
 import sqlalchemy.dialects.postgresql as pg
 from sqlalchemy.sql import func
+from src.books import models
 
 
 
@@ -40,6 +41,9 @@ class User(SQLModel, table=True):
     role:str = Field(sa_column=Column(pg.VARCHAR, nullable=False, server_default="user"))
     is_verified:bool = Field(default=False)
     password_hash:str = Field(exclude=True)
+    
+    book:Optional["models.Book"] = Relationship(back_populates="user", sa_relationship_kwargs={'lazy':"selectin"})
+    
     # Timestamp fields
     # These are automatically managed by the database
     created_at: datetime = Field(

@@ -5,7 +5,7 @@ This module defines the database table models using SQLModel, which combines
 SQLAlchemy's ORM capabilities with Pydantic's validation.
 """
 
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime
 from typing import Optional
 import uuid
@@ -13,6 +13,7 @@ import sqlalchemy.dialects.postgresql as pg
 from sqlalchemy import Column, Index
 from sqlalchemy.sql import func
 from typing import Optional
+from src.auth import model
 
 
 class Book(SQLModel, table=True):
@@ -73,6 +74,7 @@ class Book(SQLModel, table=True):
     )
     
     user_uid:Optional[uuid.UUID] = Field(default=None, foreign_key="user.uid")
+    user:Optional["model.User"] = Relationship(back_populates="book")
 
     # Timestamp fields
     # These are automatically managed by the database

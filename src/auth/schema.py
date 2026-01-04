@@ -2,7 +2,8 @@
 from pydantic import BaseModel, Field,ConfigDict
 import uuid
 from datetime import datetime
-from typing import Optional
+from typing import Optional,List
+from src.books.schemas import BookBase
 
 
 class UserCreateModel(BaseModel):
@@ -22,6 +23,7 @@ class UserResponse(BaseModel):
     is_verified:bool
     created_at:datetime
     updated_at:Optional[datetime] = None
+    books: List[BookBase]
     
 class UserLoginModel(BaseModel):
     email:str
