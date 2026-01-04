@@ -94,6 +94,51 @@ async def get_all_books(
         )
 
 
+
+
+@book_router.get(
+    "/user/{user_uid}",
+    response_model=List[BookResponse],
+    status_code=status.HTTP_200_OK,
+    summary="Get all books",
+    description="Retrieve a list of all books in the database, ordered by creation date (newest first).",
+    response_description="List of all books"
+)
+async def get_user_book_submissio(
+    user_uid:str,
+    skip: int = Query(
+        default=0,
+        ge=0,
+        description="Number of records to skip (for pagination)",
+        example=0
+    ),
+    limit: int = Query(
+        default=100,
+        ge=1,
+        le=1000,
+        description="Maximum number of records to return (for pagination)",
+        example=100
+    ),
+    session: AsyncSession = Depends(get_session),
+    token_details = Depends(access_token_bearer)
+) -> List[BookResponse]:
+
+    try:
+        books = await BookService.get_user_books(user_uid, session, skip=skip, limit=limit)
+        
+     
+        return [BookResponse.model_validate(book, from_attributes=True) for book in books]
+        
+    except Exception as e:
+        logger.error(f"Error in get_all_books endpoint: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to retrieve books"
+        )
+
+
+
+
 @book_router.get(
     "/{book_uid}",
     response_model=BookResponse,

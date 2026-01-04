@@ -43,21 +43,7 @@ class BookService:
         skip: int = 0,
         limit: int = 100
     ) -> List[Book]:
-        """
-        Retrieve all books from the database.
-        
-        Args:
-            session: Database session for executing queries
-            skip: Number of records to skip (for pagination)
-            limit: Maximum number of records to return (for pagination)
-            
-        Returns:
-            List of Book objects, ordered by creation date (newest first)
-            
-        Note:
-            In production, you should implement proper pagination
-            to avoid loading too many records at once.
-        """
+    
         try:
             # Create a SELECT query
             # order_by(desc(...)) sorts by created_at in descending order (newest first)
@@ -79,6 +65,47 @@ class BookService:
         except Exception as e:
             logger.error(f"Error retrieving books: {e}")
             raise
+        
+        
+    
+    
+    
+    
+        
+    @staticmethod
+    async def get_user_books(
+        user_uid:str,
+        session: AsyncSession,
+        skip: int = 0,
+        limit: int = 100
+    ) -> List[Book]:
+    
+        try:
+            # Create a SELECT query
+            # order_by(desc(...)) sorts by created_at in descending order (newest first)
+            statement = select(Book).where(Book.user_uid == user_uid).order_by(desc(Book.created_at))
+            
+            # Apply pagination
+            statement = statement.offset(skip).limit(limit)
+            
+            # Execute the query using SQLAlchemy's async execute method
+            # scalars() returns scalar results (single column/object results)
+            result = await session.execute(statement)
+            
+            # Get all results as a list
+            books = list(result.scalars().all())
+            
+            logger.info(f"Retrieved {len(books)} books from database")
+            return books
+            
+        except Exception as e:
+            logger.error(f"Error retrieving books: {e}")
+            raise
+        
+        
+    
+    
+    
     
     @staticmethod
     async def get_book_by_id(
