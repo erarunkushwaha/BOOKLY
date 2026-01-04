@@ -71,7 +71,6 @@ app = FastAPI(
     title=Config.APP_NAME,  # Application name from config
     description="A production-ready REST API for managing book data with PostgreSQL database.",  # API description
     version=Config.APP_VERSION,  # Application version from config
-    lifespan=lifespan,  # Lifecycle event handler
     docs_url="/docs",  # URL for Swagger UI documentation
     redoc_url="/redoc",  # URL for ReDoc documentation
     openapi_url="/openapi.json",  # URL for OpenAPI schema JSON
