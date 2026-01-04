@@ -175,7 +175,18 @@ async def create_book(
         HTTPException: 400 if validation fails, 500 if database error occurs
     """
     try:
-        user_id_str = token_details.get('user')['user_uid']
+        user_data = token_details.get('user')
+        if not user_data:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User information not found in token"
+            )
+        user_id_str = user_data.get('user_uid')
+        if not user_id_str:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User ID not found in token"
+            )
         # Convert string to UUID
         user_id = uuid.UUID(user_id_str)
         # Call the service layer to create the book
