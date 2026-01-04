@@ -74,7 +74,7 @@ class Book(SQLModel, table=True):
     )
     
     user_uid:Optional[uuid.UUID] = Field(default=None, foreign_key="user.uid")
-    user:Optional["model.User"] = Relationship(back_populates="book")
+    user:Optional["model.User"] = Relationship(back_populates="books")
 
     # Timestamp fields
     # These are automatically managed by the database
