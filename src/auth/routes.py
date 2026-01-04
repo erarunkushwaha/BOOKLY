@@ -8,13 +8,14 @@ from .utils import generate_access_token, decode_token, verify_password
 from datetime import timedelta, datetime
 from fastapi.responses import JSONResponse
 from src.config import Config
-from .depedencies import RefreshTokenBearer, AccessTokenBearer, get_current_user
+from .depedencies import RefreshTokenBearer, AccessTokenBearer, get_current_user, RoleChecker # pyright: ignore[reportAssignmentType]
 from src.db.redis import add_jti_to_block_list
 
 auth_router = APIRouter(
     prefix="/auth",
 )
 user_service = UserService()
+role_checker = RoleChecker(['user','admin'])
 
 
 @auth_router.post(
@@ -52,7 +53,7 @@ async def login(
 
         if password_valid:
             access_token = generate_access_token(
-                user_data={"email": user.email, "user_uid": str(user.uid)}
+                user_data={"email": user.email, "user_uid": str(user.uid), "role":user.role}
             )
 
             refresh_token = generate_access_token(
@@ -94,8 +95,8 @@ async def get_new_access_token(token_details: dict = Depends(RefreshTokenBearer(
         status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired token"
     )
     
-
-@auth_router.get("/me")
+# 
+@auth_router.get("/me",dependencies=[Depends(role_checker)])
 async def get_current_user(user = Depends(get_current_user)):
     return user
     
