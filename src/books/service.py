@@ -12,7 +12,7 @@ from typing import List, Optional
 import uuid
 import logging
 
-from src.books.schemas import BookCreate, BookUpdate
+from src.books.schemas import BookCreate, BookUpdate, BookDetailsModel
 from src.db.models import Book
 
 # Configure logging

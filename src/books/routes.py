@@ -12,7 +12,7 @@ import uuid
 import logging
 
 from src.db.main import get_session
-from src.books.schemas import BookCreate, BookUpdate, BookResponse
+from src.books.schemas import BookCreate, BookUpdate, BookResponse,BookDetailsModel
 from src.books.service import BookService, BookNotFoundError
 from src.auth.depedencies import AccessTokenBearer
 
@@ -141,7 +141,7 @@ async def get_user_book_submissio(
 
 @book_router.get(
     "/{book_uid}",
-    response_model=BookResponse,
+    response_model=BookDetailsModel,
     status_code=status.HTTP_200_OK,
     summary="Get book by ID",
     description="Retrieve a single book by its UUID.",

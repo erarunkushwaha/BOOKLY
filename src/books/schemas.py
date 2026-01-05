@@ -9,6 +9,8 @@ from pydantic import BaseModel, Field, field_validator, ConfigDict
 from typing import Optional
 from datetime import datetime
 import uuid
+from typing import List
+from src.reviews.schemas import ReviewModel
 
 
 class BookBase(BaseModel):
@@ -68,6 +70,9 @@ class BookBase(BaseModel):
             raise ValueError("Field cannot be empty or whitespace only")
         return v.strip()
 
+
+class BookDetailsModel(BookBase):
+    reviews:List[ReviewModel]
 
 class BookCreate(BookBase):
     """
