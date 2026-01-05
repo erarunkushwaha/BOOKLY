@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status
-from .schema import UserCreateModel, UserResponse, UserLoginModel,UserBooksModel
+from .schema import UserCreateModel, UserResponse, UserLoginModel, UserBooksModel
 from .service import UserService
 from src.db.main import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
