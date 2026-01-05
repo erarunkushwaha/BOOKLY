@@ -20,4 +20,6 @@ async def get_reviews():
 
 @review_router.post("/book/{book_uid}")
 async def add_review_to_book( book_uid:uuid.UUID,  review_data:ReviewCreateModel, current_user:User = Depends(get_current_user), session:AsyncSession = Depends(get_session)):
-   await ReviewService.add_review_to_book(user_email=current_user.email, review_data=review_data, book_uid=book_uid, session=session)
+  new_review =   await ReviewService.add_review_to_book(user_email=current_user.email, review_data=review_data, book_uid=book_uid, session=session)
+   
+  return new_review

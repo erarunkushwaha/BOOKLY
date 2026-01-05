@@ -18,7 +18,20 @@ class ReviewService:
 
         try:
             book = await BookService.get_book_by_id(book_uid=book_uid,session=session)
+            
+            if not book:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Book with uid {book_uid} not found"
+                )
+        
             user   = await UserService.get_user_by_email(email=user_email,session=session)
+            
+            if not user:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"user with  {user_email} not found"
+                )
             
             new_review = Reviews(**review_data.model_dump())
             new_review.user = user
