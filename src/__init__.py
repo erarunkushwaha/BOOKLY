@@ -15,6 +15,7 @@ from src.config import Config
 from src.db.main import init_db, close_db
 from src.books.routes import book_router
 from src.auth.routes import auth_router
+from src.reviews.routes import review_router
 
 # Configure logging
 logging.basicConfig(
@@ -150,4 +151,10 @@ app.include_router(
     auth_router,
     prefix=Config.API_V1_PREFIX,
     tags=["auth"]
+)
+
+app.include_router(
+    review_router,
+    prefix=Config.API_V1_PREFIX,
+    tags=["reviews"]
 )
