@@ -41,6 +41,7 @@ class User(SQLModel, table=True):
     password_hash:str = Field(exclude=True)
     
     books:List["Book"] = Relationship(back_populates="user", sa_relationship_kwargs={'lazy':"selectin"})
+    reviews:List["Reviews"] = Relationship(back_populates="user", sa_relationship_kwargs={'lazy':"selectin"})
     
     # Timestamp fields
     # These are automatically managed by the database
@@ -119,6 +120,7 @@ class Book(SQLModel, table=True):
     
     user_uid:Optional[uuid.UUID] = Field(default=None, foreign_key="user.uid")
     user:Optional["User"] = Relationship(back_populates="books")
+    reviews:List["Reviews"] = Relationship(back_populates="book")
 
     # Timestamp fields
     # These are automatically managed by the database
@@ -181,13 +183,14 @@ class Reviews(SQLModel, table=True):
         description="Unique identifier for the book"
     )
     
-    rating: int = Field(lt=5)
+    rating: int = Field(ge=1, le=5, description="Rating from 1 to 5")
     review_text:str
     
     user_uid:Optional[uuid.UUID] = Field(default=None, foreign_key="user.uid")
-    book_uid:Optional[uuid.UUID] = Field(default=None, foreign_key="books.uid")
+    book_uid:Optional[uuid.UUID] = Field(default=None, foreign_key="book.uid")
     
-    user:Optional["User"] = Relationship(back_populates="books")
+    user:Optional["User"] = Relationship(back_populates="reviews")
+    book:Optional["Book"] = Relationship(back_populates="reviews")
 
     # Timestamp fields
     # These are automatically managed by the database
