@@ -13,7 +13,7 @@ import uuid
 import logging
 
 from src.books.schemas import BookCreate, BookUpdate
-from src.books.models import Book
+from src.db.models import Book
 
 # Configure logging
 logger = logging.getLogger(__name__)

@@ -23,6 +23,8 @@ class UserResponse(BaseModel):
     is_verified:bool
     created_at:datetime
     updated_at:Optional[datetime] = None
+    
+class UserBooksModel(UserResponse):
     books: List[BookBase]
     
 class UserLoginModel(BaseModel):

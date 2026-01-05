@@ -1,3 +1,73 @@
+from sqlmodel import SQLModel,Field,Relationship
+import uuid
+from datetime import datetime
+from typing import Optional, List
+from sqlalchemy import Column,Index
+import sqlalchemy.dialects.postgresql as pg
+from sqlalchemy.sql import func
+
+
+
+
+class User(SQLModel, table=True):
+    uid:uuid.UUID = Field(
+        default_factory=uuid.uuid4,
+        primary_key=True,
+        nullable=False,
+        index=True,
+        description="Unique identifier for the user"
+    )
+    
+    username:str = Field(
+        ...,
+        max_length=200,
+        description="username of user",
+        index=True,
+        
+    )
+    
+    email:str = Field(
+        ...,
+        max_length=300,
+        description="email of the user",
+        unique=True,
+        nullable=False
+    )
+    
+    first_name:str
+    last_name:str
+    role:str = Field(sa_column=Column(pg.VARCHAR, nullable=False, server_default="user"))
+    is_verified:bool = Field(default=False)
+    password_hash:str = Field(exclude=True)
+    
+    books:List["models.Book"] = Relationship(back_populates="user", sa_relationship_kwargs={'lazy':"selectin"})
+    
+    # Timestamp fields
+    # These are automatically managed by the database
+    created_at: datetime = Field(
+        default=None,  # Will be set by database
+        sa_column=Column(
+            pg.TIMESTAMP(timezone=True),  # Use PostgreSQL timestamp with timezone
+            server_default=func.now(),  # Default to current timestamp on insert
+            nullable=False,
+        ),
+        description="Timestamp when the book was created"
+    )
+
+    updated_at: Optional[datetime] = Field(
+        default=None,
+        sa_column=Column(
+            pg.TIMESTAMP(timezone=True),
+            onupdate=func.now(),  # Automatically update to current timestamp on update
+            nullable=True,  # Can be null initially
+        ),
+        description="Timestamp when the book was last updated"
+    )
+
+    def __repr__(self) -> str:
+        return f"<User {self.username}>"
+    
+    
 """
 SQLModel database models for the Bookly application.
 
@@ -5,15 +75,6 @@ This module defines the database table models using SQLModel, which combines
 SQLAlchemy's ORM capabilities with Pydantic's validation.
 """
 
-from sqlmodel import SQLModel, Field, Relationship
-from datetime import datetime
-from typing import Optional
-import uuid
-import sqlalchemy.dialects.postgresql as pg
-from sqlalchemy import Column, Index
-from sqlalchemy.sql import func
-from typing import Optional
-from src.auth import model
 
 
 class Book(SQLModel, table=True):

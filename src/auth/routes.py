@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status
-from .schema import UserCreateModel, UserResponse, UserLoginModel
+from .schema import UserCreateModel, UserResponse, UserLoginModel,UserBooksModel
 from .service import UserService
 from src.db.main import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -96,7 +96,7 @@ async def get_new_access_token(token_details: dict = Depends(RefreshTokenBearer(
     )
     
 # 
-@auth_router.get("/me",response_model=UserResponse, dependencies=[Depends(role_checker)])
+@auth_router.get("/me",response_model=UserBooksModel, dependencies=[Depends(role_checker)])
 async def get_current_user(user = Depends(get_current_user)):
     # Convert SQLModel to Pydantic response model with from_attributes=True
     # This ensures relationships are properly serialized

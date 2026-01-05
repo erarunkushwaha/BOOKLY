@@ -68,7 +68,7 @@ async def init_db() -> None:
         # Begin a transaction to create tables
         async with engine.begin() as conn:
             # Import all models to ensure their metadata is registered
-            from src.books.models import Book
+            from src.db.models  import Book
             
             # Create all tables defined in SQLModel metadata
             # This uses the sync method but runs it in an async context
