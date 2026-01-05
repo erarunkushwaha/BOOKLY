@@ -40,7 +40,7 @@ class User(SQLModel, table=True):
     is_verified:bool = Field(default=False)
     password_hash:str = Field(exclude=True)
     
-    books:List["models.Book"] = Relationship(back_populates="user", sa_relationship_kwargs={'lazy':"selectin"})
+    books:List["Book"] = Relationship(back_populates="user", sa_relationship_kwargs={'lazy':"selectin"})
     
     # Timestamp fields
     # These are automatically managed by the database
@@ -135,7 +135,7 @@ class Book(SQLModel, table=True):
     )
     
     user_uid:Optional[uuid.UUID] = Field(default=None, foreign_key="user.uid")
-    user:Optional["model.User"] = Relationship(back_populates="books")
+    user:Optional["User"] = Relationship(back_populates="books")
 
     # Timestamp fields
     # These are automatically managed by the database
