@@ -73,6 +73,7 @@ class BookBase(BaseModel):
 
 class BookDetailsModel(BookBase):
     reviews:List[ReviewModel]
+    
 
 class BookCreate(BookBase):
     """

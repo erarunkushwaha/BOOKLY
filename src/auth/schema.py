@@ -4,6 +4,7 @@ import uuid
 from datetime import datetime
 from typing import Optional,List
 from src.books.schemas import BookBase
+from src.reviews.schemas import ReviewModel
 
 
 class UserCreateModel(BaseModel):
@@ -26,6 +27,7 @@ class UserResponse(BaseModel):
     
 class UserBooksModel(UserResponse):
     books: List[BookBase]
+    reviews: List[ReviewModel]
     
 class UserLoginModel(BaseModel):
     email:str
