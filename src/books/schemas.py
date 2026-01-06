@@ -72,7 +72,33 @@ class BookBase(BaseModel):
 
 
 class BookDetailsModel(BookBase):
-    reviews:List[ReviewModel]
+    """
+    Schema for book details with reviews.
+    
+    This schema extends BookBase and includes reviews along with metadata fields.
+    """
+    uid: uuid.UUID = Field(
+        ...,
+        description="Unique identifier for the book",
+        examples=["123e4567-e89b-12d3-a456-426614174000"]
+    )
+    
+    created_at: datetime = Field(
+        ...,
+        description="Timestamp when the book was created",
+        examples=["2024-01-15T10:30:00Z"]
+    )
+    
+    updated_at: Optional[datetime] = Field(
+        None,
+        description="Timestamp when the book was last updated",
+        examples=["2024-01-15T10:30:00Z"]
+    )
+    
+    reviews: List[ReviewModel] = Field(
+        default_factory=list,
+        description="List of reviews for this book"
+    )
     
 
 class BookCreate(BookBase):

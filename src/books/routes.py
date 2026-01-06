@@ -12,7 +12,8 @@ import uuid
 import logging
 
 from src.db.main import get_session
-from src.books.schemas import BookCreate, BookUpdate, BookResponse,BookDetailsModel
+from src.books.schemas import BookCreate, BookUpdate, BookResponse, BookDetailsModel
+from src.reviews.schemas import ReviewModel
 from src.books.service import BookService, BookNotFoundError
 from src.auth.depedencies import AccessTokenBearer
 
@@ -150,23 +151,23 @@ async def get_user_book_submissio(
 async def get_book(
     book_uid: uuid.UUID,  # Path parameter (from URL path)
     session: AsyncSession = Depends(get_session)
-) -> BookResponse:
+) -> BookDetailsModel:
     """
-    Retrieve a single book by its UUID.
+    Retrieve a single book by its UUID with reviews.
     
     Args:
         book_uid: UUID of the book to retrieve
         session: Database session (injected by FastAPI dependency)
         
     Returns:
-        BookResponse object with book details
+        BookDetailsModel object with book details and reviews
         
     Raises:
         HTTPException: 404 if book not found, 500 if database error occurs
     """
     try:
-        # Call the service layer to get the book
-        book = await BookService.get_book_by_id(book_uid, session)
+        # Call the service layer to get the book with reviews loaded
+        book = await BookService.get_book_by_id(book_uid, session, load_reviews=True)
         
         # Check if book exists
         if not book:
@@ -175,9 +176,25 @@ async def get_book(
                 detail=f"Book with uid {book_uid} not found"
             )
         
-        # Convert SQLModel object to Pydantic response model
-        # Use from_attributes=True to convert ORM objects to Pydantic models
-        return BookResponse.model_validate(book, from_attributes=True)
+        # Convert reviews to ReviewModel list
+        reviews = [
+            ReviewModel.model_validate(review, from_attributes=True)
+            for review in (book.reviews or [])
+        ]
+        
+        # Build BookDetailsModel with all required fields
+        book_details = BookDetailsModel(
+            uid=book.uid,
+            title=book.title,
+            author=book.author,
+            publication=book.publication,
+            price=book.price,
+            created_at=book.created_at,
+            updated_at=book.updated_at,
+            reviews=reviews
+        )
+        
+        return book_details
         
     except HTTPException:
         # Re-raise HTTP exceptions as-is

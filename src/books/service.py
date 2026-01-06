@@ -7,6 +7,7 @@ making the code more maintainable and testable.
 """
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from sqlmodel import select, desc
 from typing import List, Optional
 import uuid
@@ -110,7 +111,8 @@ class BookService:
     @staticmethod
     async def get_book_by_id(
         book_uid: uuid.UUID,
-        session: AsyncSession
+        session: AsyncSession,
+        load_reviews: bool = False
     ) -> Optional[Book]:
         """
         Retrieve a single book by its UUID.
@@ -118,6 +120,7 @@ class BookService:
         Args:
             book_uid: UUID of the book to retrieve
             session: Database session for executing queries
+            load_reviews: If True, eagerly load reviews relationship
             
         Returns:
             Book object if found, None otherwise
@@ -125,6 +128,10 @@ class BookService:
         try:
             # Create a SELECT query with WHERE clause
             statement = select(Book).where(Book.uid == book_uid)
+            
+            # Eagerly load reviews if requested
+            if load_reviews:
+                statement = statement.options(selectinload(Book.reviews))
             
             # Execute the query using SQLAlchemy's async execute method
             # scalars() returns scalar results (single column/object results)
