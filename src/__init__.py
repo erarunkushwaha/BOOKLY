@@ -6,7 +6,7 @@ sets up middleware, includes routers, and handles application lifecycle events.
 """
 
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import logging
@@ -16,6 +16,7 @@ from src.db.main import init_db, close_db
 from src.books.routes import book_router
 from src.auth.routes import auth_router
 from src.reviews.routes import review_router
+from .errors import create_exception_handler, InvalidToken, RevokedToken
 
 # Configure logging
 logging.basicConfig(
@@ -139,6 +140,14 @@ async def health_check():
     }
 
 
+app.add_exception_handler(
+    InvalidToken,
+    create_exception_handler(
+        status_code=status.HTTP_403_FORBIDDEN,
+        initial_details={"message": "Invalid toek", "error_code": "Invalid token or expired"},
+    ),
+)
+
 # Include routers
 # This registers all the route handlers from the books module
 app.include_router(
@@ -147,14 +156,6 @@ app.include_router(
     tags=["books"],  # Tag for API documentation grouping
 )
 
-app.include_router(
-    auth_router,
-    prefix=Config.API_V1_PREFIX,
-    tags=["auth"]
-)
+app.include_router(auth_router, prefix=Config.API_V1_PREFIX, tags=["auth"])
 
-app.include_router(
-    review_router,
-    prefix=Config.API_V1_PREFIX,
-    tags=["reviews"]
-)
+app.include_router(review_router, prefix=Config.API_V1_PREFIX, tags=["reviews"])

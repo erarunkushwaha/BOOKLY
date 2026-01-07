@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .service import UserService
 from typing import List
 from src.db.models import User
+from src.errors import InvalidToken,RevokedToken
 
 
 
@@ -24,20 +25,10 @@ class TokenBearer(HTTPBearer):
         token_data = decode_token(token)
         
         if not token_data:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN, detail={
-                    "error":"this token is invalid or has been revoked",
-                    "resolution":"Please get new token"
-                }
-            )
+            raise InvalidToken()
             
         if await token_in_block_list(token_data['jti']):
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN, detail={
-                    "error":"this token is invalid or has been revoked",
-                    "resolution":"Please get new token"
-                }
-            )
+            raise RevokedToken()
         
         self.verify_token_data(token_data) # pyright: ignore[reportArgumentType]
 
@@ -83,3 +74,6 @@ class RoleChecker:
             return True
         else:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not permitted to access this action")
+        
+        
+    
